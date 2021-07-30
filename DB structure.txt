@@ -1,0 +1,27 @@
+
+account
+	id, email, password, accountno, name, pan_card_no, phone_no
+    
+currency
+	id, name
+    1, rupee
+    2, dollar 
+    
+wallet
+	id, account_id, currency_id, amount, status 500- 100 locked -400 trading
+    
+wallet_transactions
+	id, type(credit/debit), wallet_id,amount,status(pending/completed/inprocess/cancelled), mode(UPI, netbanking)
+	
+trade_transactions
+	id, wallet_id, type(buy/sell), status(pending/completed/failed), item_id, unitprice, quantity , created_at
+    
+products/cryptocurrencies/item
+	id, name , code , is_active, added_at
+
+orders
+	id, wallet_id, created_at, status(pending/completed/cancelled/failed), transaction_id, order_price, order_quantity
+	
+inventory
+	id, wallet_id, item_id, quantity
+    
