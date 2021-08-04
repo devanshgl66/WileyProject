@@ -156,3 +156,16 @@ Insert into orders values ("null",47,failed,47,47000,69.13,now());
 Insert into orders values ("null",48,pending,48,48000,73.55,now());
 Insert into orders values ("null",49,complete,49,49000,67.75,now());
 Insert into orders values ("null",50,failed,50,50000,37.23,now());
+
+-------populate items table
+
+Insert into items(1,'bitcoin','b001',1,now());
+Insert into items(2,'Litecoin','L001',1,now());
+Insert into items(3,'XRP','x001',1,now());
+Insert into items(4,'Cardano','c001',1,now());
+Insert into items(5,'bitcoin cash','b002',1,now());
+Insert into items(6,'Tether','t001',1,now());
+Insert into items(7,'Dogecoin','d001',1,now());
+Insert into items(8,'PutinCoin','p001',1,now());
+Insert into items(9,'Polkadot','p002',0,now());
+Insert into items(10,'Whoppercoin','w001',0,now());
