@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `wileyProject`.`orders` (
   `order_price` FLOAT NULL,
   `order_quantity` FLOAT NULL,
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `executed_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `executed_at` TIMESTAMP NULL DEFAULT NULL,
 
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
