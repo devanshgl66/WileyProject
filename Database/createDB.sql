@@ -66,15 +66,15 @@ COMMENT = 'This contains data for user wallets';
 CREATE TABLE IF NOT EXISTS `wileyProject`.`wallet_transactions` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `type` ENUM("debit", "credit") NOT NULL,
-  `wallets_id` INT NOT NULL,
+  `wallet_id` INT NOT NULL,
   `amount` FLOAT NOT NULL,
   `status` ENUM("pending", "complete", "failed") NOT NULL,
   `mode` VARCHAR(45) NULL,
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  INDEX `wallets_transaction_wallets_id_idx` (`wallets_id` ASC) ,
-  CONSTRAINT `wallets_transaction_wallets_id`
-    FOREIGN KEY (`wallets_id`)
+  INDEX `wallets_transaction_wallet_id_idx` (`wallet_id` ASC) ,
+  CONSTRAINT `wallets_transaction_wallet_id`
+    FOREIGN KEY (`wallet_id`)
     REFERENCES `wileyProject`.`wallets` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -95,33 +95,6 @@ CREATE TABLE IF NOT EXISTS `wileyProject`.`items` (
 ENGINE = InnoDB;
 
 
--- -----------------------------------------------------
--- Table `wileyProject`.`trade_transactions`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wileyProject`.`trade_transactions` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `wallets_id` INT NOT NULL,
-  `type` ENUM("buy", "sell") NULL,
-  `status` ENUM("pending", "complete", "failed") NULL,
-  `item_id` INT NULL,
-  `unit_price` FLOAT NULL,
-  `quantity` FLOAT NOT NULL DEFAULT 0.0,
-  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  INDEX `trade_trans_wallets_idx` (`wallets_id` ASC) ,
-  INDEX `fk_trade_transaction_item_idx` (`item_id` ASC) ,
-  CONSTRAINT `trade_trans_wallets`
-    FOREIGN KEY (`wallets_id`)
-    REFERENCES `wileyProject`.`wallets` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_trade_transaction_item`
-    FOREIGN KEY (`item_id`)
-    REFERENCES `wileyProject`.`items` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-COMMENT = 'Contains data for transaction\n';
 
 
 -- -----------------------------------------------------
@@ -129,23 +102,25 @@ COMMENT = 'Contains data for transaction\n';
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wileyProject`.`orders` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `wallets_id` INT NULL,
+  `wallet_id` INT NULL,
   `status` ENUM("pending", "complete", "cancelled") NOT NULL,
-  `transaction_id` INT NULL,
+  `item_id` INT NULL,
+  `type` ENUM("buy", "sell") NULL,
   `order_price` FLOAT NULL,
   `order_quantity` FLOAT NULL,
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `executed_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
-  INDEX `orders_transaction_id_idx` (`transaction_id` ASC) ,
-  CONSTRAINT `orders_wallets_id`
-    FOREIGN KEY (`transaction_id`)
+  CONSTRAINT `orders_wallet_id`
+    FOREIGN KEY (`wallet_id`)
     REFERENCES `wileyProject`.`wallets` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `orders_transaction_id`
-    FOREIGN KEY (`transaction_id`)
-    REFERENCES `wileyProject`.`trade_transactions` (`id`)
+CONSTRAINT `fk_trade_transaction_item`
+    FOREIGN KEY (`item_id`)
+    REFERENCES `wileyProject`.`items` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -158,12 +133,12 @@ CREATE TABLE IF NOT EXISTS `wileyProject`.`inventory` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `item_id` INT NOT NULL,
   `quantity` FLOAT NOT NULL DEFAULT 0.0,
-  `wallets_id` INT NOT NULL,
+  `wallet_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `inventory_wallets_id_idx` (`wallets_id` ASC) ,
+  INDEX `inventory_wallet_id_idx` (`wallet_id` ASC) ,
   INDEX `inventory_item_id_idx` (`item_id` ASC) ,
-  CONSTRAINT `inventory_wallets_id`
-    FOREIGN KEY (`wallets_id`)
+  CONSTRAINT `inventory_wallet_id`
+    FOREIGN KEY (`wallet_id`)
     REFERENCES `wileyProject`.`wallets` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -280,56 +255,60 @@ Insert into wallets values (49,49,"INR",10000,"active");
 Insert into wallets values (50,50,"INR",11000,"active");
 
 -- populate orders table
-Insert into orders values (null,1,"pending",1,1000,2000,now());
-Insert into orders values (null,2,"complete",2,2000,3000,now());
-Insert into orders values (null,3,"pending",3,3000,4000,now());
-Insert into orders values (null,4,"complete",4,4000,5000,now());
-Insert into orders values (null,5,"pending",5,5000,6000,now());
-Insert into orders values (null,6,"complete",6,6000,7000,now());
-Insert into orders values (null,7,"pending",7,7000,8000,now());
-Insert into orders values (null,8,"complete",8,8000,9000,now());
-Insert into orders values (null,9,"pending",9,9000,10000,now());
-Insert into orders values (null,10,"complete",10,10000,11000,now());
-Insert into orders values (null,11,"pending",11,11000,12000,now());
-Insert into orders values (null,12,"complete",12,12000,13000,now());
-Insert into orders values (null,13,"pending",13,13000,14000,now());
-Insert into orders values (null,14,"complete",14,14000,15000,now());
-Insert into orders values (null,15,"pending",15,15000,16000,now());
-Insert into orders values (null,16,"complete",16,16000,17000,now());
-Insert into orders values (null,17,"pending",17,17000,18000,now());
-Insert into orders values (null,18,"complete",18,18000,19000,now());
-Insert into orders values (null,19,"pending",19,19000,20000,now());
-Insert into orders values (null,20,"complete",20,20000,1000,now());
-Insert into orders values (null,21,"pending",21,21000,2000,now());
-Insert into orders values (null,22,"complete",22,22000,3000,now());
-Insert into orders values (null,23,"pending",23,23000,4000,now());
-Insert into orders values (null,24,"complete",24,24000,5000,now());
-Insert into orders values (null,25,"pending",25,25000,6000,now());
-Insert into orders values (null,26,"complete",26,26000,7000,now());
-Insert into orders values (null,27,"pending",27,27000,8000,now());
-Insert into orders values (null,28,"complete",28,28000,9000,now());
-Insert into orders values (null,29,"pending",29,29000,10000,now());
-Insert into orders values (null,30,"complete",30,30000,11000,now());
-Insert into orders values (null,31,"pending",31,31000,12000,now());
-Insert into orders values (null,32,"complete",32,32000,13000,now());
-Insert into orders values (null,33,"pending",33,33000,14000,now());
-Insert into orders values (null,34,"complete",34,34000,15000,now());
-Insert into orders values (null,35,"pending",35,35000,16000,now());
-Insert into orders values (null,36,"complete",36,36000,17000,now());
-Insert into orders values (null,37,"pending",37,37000,18000,now());
-Insert into orders values (null,38,"complete",38,38000,19000,now());
-Insert into orders values (null,39,"pending",39,39000,20000,now());
-Insert into orders values (null,40,"complete",40,40000,1000,now());
-Insert into orders values (null,41,"pending",41,41000,2000,now());
-Insert into orders values (null,42,"complete",42,42000,3000,now());
-Insert into orders values (null,43,"pending",43,43000,4000,now());
-Insert into orders values (null,44,"complete",44,44000,5000,now());
-Insert into orders values (null,45,"pending",45,45000,6000,now());
-Insert into orders values (null,46,"complete",46,46000,7000,now());
-Insert into orders values (null,47,"pending",47,47000,8000,now());
-Insert into orders values (null,48,"complete",48,48000,9000,now());
-Insert into orders values (null,49,"pending",49,49000,10000,now());
-Insert into orders values (null,50,"complete",50,50000,11000,now());
+Insert into orders values (null,1,"pending",2,"sell",1000,2000,now(),now());
+Insert into orders values (null,2,"complete",3,"buy",2000,3000,now(),null);
+Insert into orders values (null,3,"pending",4,"sell",3000,4000,now(),now());
+Insert into orders values (null,4,"complete",5,"buy",4000,5000,now(),null);
+Insert into orders values (null,5,"pending",6,"sell",5000,6000,now(),now());
+Insert into orders values (null,6,"complete",7,"buy",6000,7000,now(),null);
+Insert into orders values (null,7,"pending",8,"sell",7000,8000,now(),now());
+Insert into orders values (null,8,"complete",9,"buy",8000,9000,now(),null);
+Insert into orders values (null,9,"pending",1,"sell",9000,10000,now(),now());
+Insert into orders values (null,10,"complete",2,"buy",10000,11000,now(),null);
+Insert into orders values (null,11,"pending",3,"sell",11000,12000,now(),now());
+Insert into orders values (null,12,"complete",4,"buy",12000,13000,now(),null);
+Insert into orders values (null,13,"pending",5,"sell",13000,14000,now(),now());
+Insert into orders values (null,14,"complete",6,"buy",14000,15000,now(),null);
+Insert into orders values (null,15,"pending",7,"sell",15000,16000,now(),now());
+Insert into orders values (null,16,"complete",8,"buy",16000,17000,now(),null);
+Insert into orders values (null,17,"pending",9,"sell",17000,18000,now(),now());
+Insert into orders values (null,18,"complete",1,"buy",18000,19000,now(),null);
+Insert into orders values (null,19,"pending",2,"sell",19000,20000,now(),now());
+Insert into orders values (null,20,"complete",3,"buy",20000,1000,now(),null);
+Insert into orders values (null,21,"pending",4,"sell",21000,2000,now(),now());
+Insert into orders values (null,22,"complete",5,"buy",22000,3000,now(),null);
+Insert into orders values (null,23,"pending",6,"sell",23000,4000,now(),now());
+Insert into orders values (null,24,"complete",7,"buy",24000,5000,now(),null);
+Insert into orders values (null,25,"pending",8,"sell",25000,6000,now(),now());
+Insert into orders values (null,26,"complete",9,"buy",26000,7000,now(),null);
+Insert into orders values (null,27,"pending",1,"sell",27000,8000,now(),now());
+Insert into orders values (null,28,"complete",2,"buy",28000,9000,now(),null);
+Insert into orders values (null,29,"pending",3,"sell",29000,10000,now(),now());
+Insert into orders values (null,30,"complete",4,"buy",30000,11000,now(),null);
+Insert into orders values (null,31,"pending",5,"sell",31000,12000,now(),now());
+Insert into orders values (null,32,"complete",6,"buy",32000,13000,now(),null);
+Insert into orders values (null,33,"pending",7,"sell",33000,14000,now(),now());
+Insert into orders values (null,34,"complete",8,"buy",34000,15000,now(),null);
+Insert into orders values (null,35,"pending",9,"sell",35000,16000,now(),now());
+Insert into orders values (null,36,"complete",1,"buy",36000,17000,now(),null);
+Insert into orders values (null,37,"pending",2,"sell",37000,18000,now(),now());
+Insert into orders values (null,38,"complete",3,"buy",38000,19000,now(),null);
+Insert into orders values (null,39,"pending",4,"sell",39000,20000,now(),now());
+Insert into orders values (null,40,"complete",5,"buy",40000,1000,now(),null);
+Insert into orders values (null,41,"pending",6,"sell",41000,2000,now(),now());
+Insert into orders values (null,42,"complete",7,"buy",42000,3000,now(),null);
+Insert into orders values (null,43,"pending",8,"sell",43000,4000,now(),now());
+Insert into orders values (null,44,"complete",9,"buy",44000,5000,now(),null);
+Insert into orders values (null,45,"pending",1,"sell",45000,6000,now(),now());
+Insert into orders values (null,46,"complete",2,"buy",46000,7000,now(),null);
+Insert into orders values (null,47,"pending",3,"sell",47000,8000,now(),now());
+Insert into orders values (null,48,"complete",4,"buy",48000,9000,now(),null);
+Insert into orders values (null,49,"pending",5,"sell",49000,10000,now(),now());
+Insert into orders values (null,50,"complete",6,"buy",50000,11000,now(),null);
+
+
+
+
 
 -- populate items table
 
@@ -394,58 +373,6 @@ Insert into wallet_transactions values (47,"credit",47,47000,"failed","UPI",now(
 Insert into wallet_transactions values (48,"debit",48,48000,"complete","UPI",now());
 Insert into wallet_transactions values (49,"credit",49,49000,"failed","UPI",now());
 Insert into wallet_transactions values (50,"debit",50,50000,"complete","UPI",now());
-
-
-Insert into trade_transactions values (1,1,"sell","pending",1,1000,2000,now());
-Insert into trade_transactions values (2,2,"buy","complete",2,2000,3000,now());
-Insert into trade_transactions values (3,3,"sell","pending",3,3000,4000,now());
-Insert into trade_transactions values (4,4,"buy","complete",4,4000,5000,now());
-Insert into trade_transactions values (5,5,"sell","pending",5,5000,6000,now());
-Insert into trade_transactions values (6,6,"buy","complete",6,6000,7000,now());
-Insert into trade_transactions values (7,7,"sell","pending",7,7000,8000,now());
-Insert into trade_transactions values (8,8,"buy","complete",8,8000,9000,now());
-Insert into trade_transactions values (9,9,"sell","pending",9,9000,10000,now());
-Insert into trade_transactions values (10,10,"buy","complete",0,10000,11000,now());
-Insert into trade_transactions values (11,11,"sell","pending",1,11000,12000,now());
-Insert into trade_transactions values (12,12,"buy","complete",2,12000,13000,now());
-Insert into trade_transactions values (13,13,"sell","pending",3,13000,14000,now());
-Insert into trade_transactions values (14,14,"buy","complete",4,14000,15000,now());
-Insert into trade_transactions values (15,15,"sell","pending",5,15000,16000,now());
-Insert into trade_transactions values (16,16,"buy","complete",6,16000,17000,now());
-Insert into trade_transactions values (17,17,"sell","pending",7,17000,18000,now());
-Insert into trade_transactions values (18,18,"buy","complete",8,18000,19000,now());
-Insert into trade_transactions values (19,19,"sell","pending",9,19000,20000,now());
-Insert into trade_transactions values (20,20,"buy","complete",0,20000,1000,now());
-Insert into trade_transactions values (21,21,"sell","pending",1,21000,2000,now());
-Insert into trade_transactions values (22,22,"buy","complete",2,22000,3000,now());
-Insert into trade_transactions values (23,23,"sell","pending",3,23000,4000,now());
-Insert into trade_transactions values (24,24,"buy","complete",4,24000,5000,now());
-Insert into trade_transactions values (25,25,"sell","pending",5,25000,6000,now());
-Insert into trade_transactions values (26,26,"buy","complete",6,26000,7000,now());
-Insert into trade_transactions values (27,27,"sell","pending",7,27000,8000,now());
-Insert into trade_transactions values (28,28,"buy","complete",8,28000,9000,now());
-Insert into trade_transactions values (29,29,"sell","pending",9,29000,10000,now());
-Insert into trade_transactions values (30,30,"buy","complete",0,30000,11000,now());
-Insert into trade_transactions values (31,31,"sell","pending",1,31000,12000,now());
-Insert into trade_transactions values (32,32,"buy","complete",2,32000,13000,now());
-Insert into trade_transactions values (33,33,"sell","pending",3,33000,14000,now());
-Insert into trade_transactions values (34,34,"buy","complete",4,34000,15000,now());
-Insert into trade_transactions values (35,35,"sell","pending",5,35000,16000,now());
-Insert into trade_transactions values (36,36,"buy","complete",6,36000,17000,now());
-Insert into trade_transactions values (37,37,"sell","pending",7,37000,18000,now());
-Insert into trade_transactions values (38,38,"buy","complete",8,38000,19000,now());
-Insert into trade_transactions values (39,39,"sell","pending",9,39000,20000,now());
-Insert into trade_transactions values (40,40,"buy","complete",0,40000,1000,now());
-Insert into trade_transactions values (41,41,"sell","pending",1,41000,2000,now());
-Insert into trade_transactions values (42,42,"buy","complete",2,42000,3000,now());
-Insert into trade_transactions values (43,43,"sell","pending",3,43000,4000,now());
-Insert into trade_transactions values (44,44,"buy","complete",4,44000,5000,now());
-Insert into trade_transactions values (45,45,"sell","pending",5,45000,6000,now());
-Insert into trade_transactions values (46,46,"buy","complete",6,46000,7000,now());
-Insert into trade_transactions values (47,47,"sell","pending",7,47000,8000,now());
-Insert into trade_transactions values (48,48,"buy","complete",8,48000,9000,now());
-Insert into trade_transactions values (49,49,"sell","pending",9,49000,10000,now());
-Insert into trade_transactions values (50,50,"buy","complete",0,50000,11000,now());
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
