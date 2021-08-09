@@ -6,16 +6,33 @@ import java.util.Arrays;
 public abstract class Model {
 	private String table;
 	private String[] fillable;
+	private Model model;
 
 	private Boolean execute(String preparedInsertQuery) {
 		return true;
 //		return st.execute(preparedInsertQuery);
 	}
 
-	public boolean insert(Model modal) {
-		this.setFields(modal);
+	public boolean insert(Model model) {
+		this.setFields(model);
 		System.out.println(table);
-		return this.execute(this.getPreparedInsertQuery());
+		return this.execute(this.fillPreparedStatement(this.getPreparedInsertQuery()));
+	}
+
+	private PreparedStatement fillPreparedStatement(PreparedStatement preparedInsertQuery) {
+		try {
+			int i=0;
+			for (String field : this.fillable) {
+				preparedInsertQuery.setString(0, (String) this.model.getClass().getField("table").get(this.model));
+				i++;
+			}
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return preparedInsertQuery;
+		
 	}
 
 //	abstract boolean delete();
