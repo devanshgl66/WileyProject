@@ -1,8 +1,8 @@
 package models;
 
 public class inventory {
-	
-	int id,itemId,walletId;
+
+	int id, itemId, walletId;
 	float quatity;
 
 	public inventory(int id, int itemId, int walletId, float quatity) {
@@ -11,4 +11,4 @@ public class inventory {
 		this.walletId = walletId;
 		this.quatity = quatity;
 	}
-	}
+}
