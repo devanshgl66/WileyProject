@@ -2,12 +2,12 @@ package models;
 
 public class users {
 	int id,phoneNumber;
-	String name,email,password,accountNo,panNumber;
+	String name,email,password,accountNo,panNumber,createdAt;
 	
 	
 	
 	public users(int id, int phoneNumber, String name, String email, String password, String accountNo,
-			String panNumber) {
+			String panNumber,String createdAt) {
 		
 		this.id = id;
 		this.phoneNumber = phoneNumber;
