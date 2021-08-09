@@ -1,0 +1,4 @@
+String url="";
+String user="";
+String password="";
+String db="";
