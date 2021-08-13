@@ -3,7 +3,7 @@ package models;
 
 public class users extends Model {
 	int id;
-	String name, email, password, account_no, pan_number, phone_number,created_at;
+	public String name, email, password, account_no, pan_number, phone_number,created_at;
 
 	public String table = "users";
 	public String[] fillable = { "phone_number", "name", "email", "password", "account_no",
@@ -19,6 +19,9 @@ public class users extends Model {
 		this.account_no = accountNo;
 		this.pan_number = panNumber;
 		this.created_at = createdAt;
+	}
+
+	public users() {
 	}
 
 }

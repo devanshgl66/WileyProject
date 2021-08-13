@@ -12,15 +12,15 @@ public class AccountController {
 	public void getAccountOptions() {
 		String choice="-1";
 		while(!choice.equals("5")) {
-			System.out.println("\n\n1) Display account Info\n5)Exit");
+			System.out.println("\n\n1) Display account Info\n2)Create new account5)Exit");
 			choice=sc.nextLine();
 			switch (choice) {
 			case "1":
+				this.display();
+				break;
+			case "2":
 				this.createAccount();
 				break;
-//			case "2":
-//				new Search(sc);
-//				break;
 //			case "3":
 //				new AddEmployee(sc);
 //				break;
@@ -33,6 +33,10 @@ public class AccountController {
 				break;
 			}
 		}
+	}
+	private void display() {
+		String q="select * from users where id="+50;
+		new users().rawSelect(q);
 	}
 //	private void displayAccountDetails() {
 //		
