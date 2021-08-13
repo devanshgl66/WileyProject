@@ -3,8 +3,13 @@ package models;
 import java.util.Arrays;
 
 public class users extends Model {
-	public int id;
+	int id;
 	public String name, email, password, account_no, pan_number, phone_number,created_at;
+
+	public String table = "users";
+	public String[] fillable = { "phone_number", "name", "email", "password", "account_no",
+			"pan_number" };
+
 	public users(String phoneNumber, String name, String email, String password, String accountNo, String panNumber,String createdAt) {
 		//setting table name and field name 
 		super("users",new String[] {"phone_number", "name", "email", "password", "account_no",
@@ -22,6 +27,9 @@ public class users extends Model {
 		return "users [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", account_no="
 				+ account_no + ", pan_number=" + pan_number + ", phone_number=" + phone_number + ", created_at="
 				+ created_at + ", table=" + table + ", fillable=" + Arrays.toString(fillable) + "]";
+	}
+
+	public users() {
 	}
 
 }

@@ -19,9 +19,42 @@ public abstract class Model extends DBConnection {
 		}
 		return false;
 	}
+
+	public void rawSelect(String q) {
+		connect();
+			ResultSet rs;
+			try {
+				rs = this.executeQuery(q);
+				ResultSetMetaData rsmd = rs.getMetaData();
+				int colCount=rsmd.getColumnCount();
+				for(int i=0;i<colCount;i++)
+					System.out.print(String.format("%-20s",rsmd.getColumnName(i+1)));
+				System.out.println();
+				while(rs.next()) {
+					for(int i=0;i<colCount;i++)
+						System.out.print(String.format("%-20s",rs.getString(i+1)));
+					System.out.println();
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+
+	public boolean rawUpdateDelete(String q) {
+		try {
+			this.execute(q);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public boolean update() {
 		return false;
 	}
+
 	private PreparedStatement fillPreparedStatement(PreparedStatement preparedInsertQuery) {
 		try {
 			int i=1;
@@ -40,7 +73,8 @@ public abstract class Model extends DBConnection {
 		String joinedq = String.join(",", questionmarks);
 		PreparedStatement addEmp = null;
 		try {
-			addEmp = this.con.prepareStatement("Insert into " + this.table + " (" + joined + ") " + "values (" + joinedq + ")");
+			addEmp = this.con
+					.prepareStatement("Insert into " + this.table + " (" + joined + ") " + "values (" + joinedq + ")");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
