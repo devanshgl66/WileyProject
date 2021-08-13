@@ -3,27 +3,35 @@ package models;
 import java.sql.*;
 import java.util.Arrays;
 
-public abstract class Model {
+public abstract class Model extends DBConnection {
 	private String table;
 	private String[] fillable;
 	private Model model;
-
-	private Boolean execute(String preparedInsertQuery) {
-		return true;
-//		return st.execute(preparedInsertQuery);
+//	public Model() {
+//		connect();
+//	}
+	public boolean insert() {
+		connect();
+		this.model=this;
+		System.out.println(this.model);
+		this.setFields(this);
+		try {
+			return this.execute(this.fillPreparedStatement(this.getPreparedInsertQuery()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
-
-	public boolean insert(Model model) {
-		this.setFields(model);
-		System.out.println(table);
-		return this.execute(this.fillPreparedStatement(this.getPreparedInsertQuery()));
+	public boolean update() {
+		return false;
 	}
-
 	private PreparedStatement fillPreparedStatement(PreparedStatement preparedInsertQuery) {
 		try {
-			int i=0;
+			int i=1;
 			for (String field : this.fillable) {
-				preparedInsertQuery.setString(0, (String) this.model.getClass().getField("table").get(this.model));
+				System.out.println((String) this.model.getClass().getField("phone_number").get(this.model));
+				preparedInsertQuery.setString(i, (String) this.model.getClass().getField("phone_number").get(this.model));
+				System.out.println(preparedInsertQuery);
 				i++;
 			}
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -35,9 +43,6 @@ public abstract class Model {
 		
 	}
 
-//	abstract boolean delete();
-//	abstract boolean update();
-//	abstract public  ResultSet raw() ;
 
 	private void setFields(Model modal) {
 		try {
@@ -48,12 +53,17 @@ public abstract class Model {
 		}
 	}
 
-	private String getPreparedInsertQuery() {
+	private PreparedStatement getPreparedInsertQuery() {
 		String joined = String.join(",", this.fillable);
 		String[] questionmarks = new String[this.fillable.length];
 		Arrays.fill(questionmarks, "?");
 		String joinedq = String.join(",", questionmarks);
-		System.out.println("Insert into" + this.table + "(" + joined + ")" + "values(" + joinedq + ")");
-		return "Insert into " + this.table + " (" + joined + ") " + "values (" + joinedq + ")";
+		PreparedStatement addEmp = null;
+		try {
+			addEmp = this.con.prepareStatement("Insert into " + this.table + " (" + joined + ") " + "values (" + joinedq + ")");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return addEmp;
 	}
 }
