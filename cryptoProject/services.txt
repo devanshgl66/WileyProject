@@ -1,0 +1,25 @@
+wallet
+    credit
+    debit
+    showBalance
+    transactionHistory
+
+items
+    viewDetail
+
+order
+    Place order
+    Track order
+    
+
+Account
+    viewDetail
+    UpdateDetail
+
+Inventory
+    viewInventory
+
+Authentication
+    Register
+    Login 
+    Logout

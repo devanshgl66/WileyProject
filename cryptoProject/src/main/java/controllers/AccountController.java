@@ -40,7 +40,7 @@ public class AccountController {
 //		
 //	}
 	public void createAccount() {
-		users u=new users("123","jatin", "ewr", "ppsd", "sds", "sdsd", "pl");
+		users u=new users("1232","devansh", "ewr", "ppsd", "sds", "sdsd","a");
 		u.insert();
 	}
 

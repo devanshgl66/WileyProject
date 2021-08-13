@@ -4,17 +4,14 @@ import java.sql.*;
 import java.util.Arrays;
 
 public abstract class Model extends DBConnection {
-	private String table;
-	private String[] fillable;
-	private Model model;
-//	public Model() {
-//		connect();
-//	}
+	public final String table;
+	public final String[] fillable;
+	public Model(String table,String []fillable){
+		this.table=table;
+		this.fillable=fillable;
+	}
 	public boolean insert() {
 		connect();
-		this.model=this;
-		System.out.println(this.model);
-		this.setFields(this);
 		try {
 			return this.execute(this.fillPreparedStatement(this.getPreparedInsertQuery()));
 		} catch (SQLException e) {
@@ -28,31 +25,14 @@ public abstract class Model extends DBConnection {
 	private PreparedStatement fillPreparedStatement(PreparedStatement preparedInsertQuery) {
 		try {
 			int i=1;
-			for (String field : this.fillable) {
-				System.out.println((String) this.model.getClass().getField("phone_number").get(this.model));
-				preparedInsertQuery.setString(i, (String) this.model.getClass().getField("phone_number").get(this.model));
-				System.out.println(preparedInsertQuery);
-				i++;
-			}
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
+			for (String field : this.fillable) 
+				preparedInsertQuery.setString(i++, (String) this.getClass().getField(field).get(this));
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return preparedInsertQuery;
 		
 	}
-
-
-	private void setFields(Model modal) {
-		try {
-			this.table = (String) modal.getClass().getField("table").get(modal);
-			this.fillable = (String[]) modal.getClass().getField("fillable").get(modal);
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private PreparedStatement getPreparedInsertQuery() {
 		String joined = String.join(",", this.fillable);
 		String[] questionmarks = new String[this.fillable.length];

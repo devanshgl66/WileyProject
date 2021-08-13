@@ -10,7 +10,7 @@ public class wallets {
 		super();
 		this.id = id;
 		this.accountId = accountId;
-		this.currency_type = currency_type;
+		this.currencyType = currency_type;
 		this.status = status;
 		this.amount = amount;
 	}
